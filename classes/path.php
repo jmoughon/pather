@@ -11,6 +11,7 @@ class Path
     protected $inputName;
     protected $outputName;
     protected $lineLength;
+    protected $lineCount;
     protected $hashes = array();
 
     /**
@@ -47,13 +48,16 @@ class Path
                 }
 
                 // Set the line length the first time (assumes each line is same).
-                if ($line === 1) {
-                    $this->lineLength = strlen($line);
+                if ($lineCount === 0) {
+                    $this->lineLength = strlen(trim($line));
                 }
 
                 // Next line.
                 $lineCount++;
             }
+
+            // Save lineCount for future output.
+            $this->lineCount = $lineCount-1;
 
             fclose($handle);
         } else {
@@ -71,6 +75,8 @@ class Path
             throw new Exception('No hashes, call processInput first.');
         }
 
+        echo $this->lineCount . ' ';
+        echo $this->lineLength;
 
     }
 
