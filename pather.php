@@ -5,10 +5,14 @@
  * Calls path class for inputs from cli.
  */
 
-require_once 'includes/path.php';
+// Grab Path class.
+require_once 'classes/path.php';
 
 // If running in the cli, process input through.
 if (php_sapi_name() == 'cli') {
-    $path = new Path($argv[1], $argv[2]);
-    $path->output;
+    // Get new Path class and pass in file inputs.
+    $path = new Path\Path($argv[1], $argv[2]);
+
+    // Process the inputs.
+    $path->init();
 }
