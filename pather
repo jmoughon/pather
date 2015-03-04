@@ -1,0 +1,5 @@
+if [ -x pather.php ]; then
+  php pather.php $1 $2
+else
+  echo "PROBLEM: 'pather' does not exist in this directory or is not executable"
+fi
