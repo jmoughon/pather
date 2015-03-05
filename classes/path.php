@@ -152,7 +152,7 @@ class Path
                         $txt .= str_repeat('.', $this->lineLength - $hash - 1);
                     }
 
-                    // If next row should have only a star.
+                    // If next row should have a star.
                     if ($i !== $last && $key === $count - 1) {
                         $star = $hash;
                     }
