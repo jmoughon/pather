@@ -71,7 +71,7 @@ class Path
     public function outputFile()
     {
         // If inputProcess was not run first throw error.
-        if (!isset($this->hashes)) {
+        if (empty($this->hashes)) {
             throw new Exception('No hashes, call processInput first.');
         }
 
