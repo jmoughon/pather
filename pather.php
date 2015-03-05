@@ -7,6 +7,12 @@
 
 // If running in the cli, process input through.
 if (php_sapi_name() == 'cli') {
+    // Error if no args.
+    if (!isset($argv[1]) || !isset($argv[2])) {
+        throw new Exception('One or both input arguments were not set.');
+        return;
+    }
+
     // Grab Path class.
     require_once 'classes/path.php';
 
