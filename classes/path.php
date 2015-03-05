@@ -44,7 +44,7 @@ class Path
 
                 // Get each # position per line.
                 while (($pos = strpos($line, '#', $pos + 1)) !== false) {
-                    $this->hashes[$lineCount][] = $pos;
+                    $this->hashes[$lineCount + 1][] = $pos;
                 }
 
                 // Set the line length the first time (assumes each line is same).
@@ -57,7 +57,7 @@ class Path
             }
 
             // Save lineCount for future output.
-            $this->lineCount = $lineCount-1;
+            $this->lineCount = $lineCount;
 
             fclose($handle);
         } else {
@@ -70,14 +70,82 @@ class Path
      */
     public function outputFile()
     {
+        print_r($this->hashes);
+
         // If inputProcess was not run first throw error.
         if (!isset($this->hashes)) {
             throw new Exception('No hashes, call processInput first.');
         }
 
-        echo $this->lineCount . ' ';
-        echo $this->lineLength;
+        // Open the output file for writing.
+        $handle = fopen($this->outputName, 'w');
 
+        // Get line of last hash.
+        end($this->hashes);
+        $last = key($this->hashes);
+
+        // Loop through each line.
+        for ($i = 1; $i < $this->lineCount; $i++) {
+            $txt = '';
+
+            // If there are no hashes, print only dots.
+            if (!isset($this->hashes[$i]) && !isset($star)) {
+                $txt = str_repeat('.', $this->lineLength);
+            } elseif (isset($this->hashes[$i])) {
+                $count = count($this->hashes[$i]);
+                $reverseStar = false;
+
+                foreach ($this->hashes[$i] as $key => $hash) {
+                    if ($hash > 0 && $key === 0 && !isset($star)) {
+                        $txt .= str_repeat('.', $hash);
+                        $txt .= '#';
+                    } elseif (isset($star) && $hash > $star) {
+                        $txt .= str_repeat('.', $star);
+                        $txt .= str_repeat('*', $hash - $star);
+                        $txt .= '#';
+
+                        // Allow for last char in line.
+                        if ($this->lineLength - $hash - $star - 2 > 0) {
+                            $txt .= str_repeat('.', $this->lineLength - $hash - $star - 2);
+                        }
+
+                        unset($star);
+                    } elseif (isset($star) && $hash < $star) {
+                        $txt .= str_repeat('.', $hash);
+                        $txt .= '#';
+                        $txt .= str_repeat('*', $star - $hash);
+                        $txt .= str_repeat('.', $this->lineLength - $star - 1);
+                        $reverseStar = true;
+                        unset($star);
+                    } elseif ($key > 0) {
+                        $txt .= str_repeat('*', $hash - $this->hashes[$i][$key - 1] - 1);
+                        $txt .= '#';
+                    }
+
+                    if ($key === $count - 1 && $hash !== $this->lineLength && !$reverseStar) {
+                        $txt .= str_repeat('.', $this->lineLength - $hash - 1);
+                    }
+
+                    if ($i !== $last && $key === $count - 1) {
+                        $star = $hash;
+                    }
+                }
+            } elseif (!isset($this->hashes[$i]) && isset($star)) {
+                $txt = str_repeat('.', $star);
+                $txt .= '*';
+                $txt .= str_repeat('.', $this->lineLength - $star - 1);
+            }
+
+
+
+            // Add line break.
+            $txt .= "\n";
+
+            // Write line.
+            fwrite($handle, $txt);
+        }
+
+        fclose($handle);
     }
 
     /**
