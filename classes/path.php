@@ -165,8 +165,6 @@ class Path
                 $txt .= str_repeat('.', $this->lineLength - $star - 1);
             }
 
-
-
             // Add line break.
             $txt .= "\n";
 
