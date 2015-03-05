@@ -91,14 +91,20 @@ class Path
             // If there are no hashes, print only dots.
             if (!isset($this->hashes[$i]) && !isset($star)) {
                 $txt = str_repeat('.', $this->lineLength);
+
+            // Row with hash(s).
             } elseif (isset($this->hashes[$i])) {
                 $count = count($this->hashes[$i]);
                 $reverseStar = false;
 
+                // For each hash.
                 foreach ($this->hashes[$i] as $key => $hash) {
+                    // First hash.
                     if ($hash > 0 && $key === 0 && !isset($star)) {
                         $txt .= str_repeat('.', $hash);
                         $txt .= '#';
+
+                    // If star row and hash is last.
                     } elseif (isset($star) && $hash > $star) {
                         $txt .= str_repeat('.', $star);
                         $txt .= str_repeat('*', $hash - $star);
@@ -108,8 +114,9 @@ class Path
                         if ($this->lineLength - $hash - $star - 2 > 0) {
                             $txt .= str_repeat('.', $this->lineLength - $hash - $star - 2);
                         }
-
                         unset($star);
+
+                    // If star row and star is before hash.
                     } elseif (isset($star) && $hash < $star) {
                         $txt .= str_repeat('.', $hash);
                         $txt .= '#';
@@ -117,19 +124,25 @@ class Path
                         $txt .= str_repeat('.', $this->lineLength - $star - 1);
                         $reverseStar = true;
                         unset($star);
+
+                    // Else fill b/w hashes.
                     } elseif ($key > 0) {
                         $txt .= str_repeat('*', $hash - $this->hashes[$i][$key - 1] - 1);
                         $txt .= '#';
                     }
 
+                    // End row.
                     if ($key === $count - 1 && $hash !== $this->lineLength && !$reverseStar) {
                         $txt .= str_repeat('.', $this->lineLength - $hash - 1);
                     }
 
+                    // If next row should have only a star.
                     if ($i !== $last && $key === $count - 1) {
                         $star = $hash;
                     }
                 }
+
+            // Star only row.
             } elseif (!isset($this->hashes[$i]) && isset($star)) {
                 $txt = str_repeat('.', $star);
                 $txt .= '*';
