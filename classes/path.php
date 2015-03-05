@@ -70,8 +70,6 @@ class Path
      */
     public function outputFile()
     {
-        print_r($this->hashes);
-
         // If inputProcess was not run first throw error.
         if (!isset($this->hashes)) {
             throw new Exception('No hashes, call processInput first.');
@@ -95,25 +93,37 @@ class Path
             // Row with hash(s).
             } elseif (isset($this->hashes[$i])) {
                 $count = count($this->hashes[$i]);
-                $reverseStar = false;
 
                 // For each hash.
                 foreach ($this->hashes[$i] as $key => $hash) {
+                    $reverseStar = false;
                     // First hash.
                     if ($hash > 0 && $key === 0 && !isset($star)) {
                         $txt .= str_repeat('.', $hash);
                         $txt .= '#';
 
-                    // If star row and hash is last.
-                    } elseif (isset($star) && $hash > $star) {
-                        $txt .= str_repeat('.', $star);
-                        $txt .= str_repeat('*', $hash - $star);
+                    // If row is only hash.
+                    } elseif ($hash > 0 && $key === 0 && isset($star) && $hash === $star) {
+                        $txt .= str_repeat('.', $hash);
                         $txt .= '#';
 
-                        // Allow for last char in line.
-                        if ($this->lineLength - $hash - $star - 2 > 0) {
-                            $txt .= str_repeat('.', $this->lineLength - $hash - $star - 2);
+                        // Unset for last in line.
+                        if ($i === $last && $key === $count - 1) {
+                            unset($star);
                         }
+
+                    // If star row and hash is last.
+                    } elseif (isset($star) && $hash > $star) {
+                        // Account for last char as hash.
+                        if (!isset($this->hashes[$i][$key - 1])) {
+                            $txt .= str_repeat('.', $star);
+                            $starLength = $hash - $star;
+                        } else {
+                            $starLength = $hash - $star -1;
+                        }
+
+                        $txt .= str_repeat('*', $starLength);
+                        $txt .= '#';
                         unset($star);
 
                     // If star row and star is before hash.
@@ -121,13 +131,19 @@ class Path
                         $txt .= str_repeat('.', $hash);
                         $txt .= '#';
                         $txt .= str_repeat('*', $star - $hash);
-                        $txt .= str_repeat('.', $this->lineLength - $star - 1);
+
+                        // Account for 2 hashes on the same row.
+                        if (!isset($this->hashes[$i][$key + 1])) {
+                             $txt .= str_repeat('.', $this->lineLength - $star - 1);
+                        }
+
                         $reverseStar = true;
                         unset($star);
 
                     // Else fill b/w hashes.
                     } elseif ($key > 0) {
-                        $txt .= str_repeat('*', $hash - $this->hashes[$i][$key - 1] - 1);
+                        $currentLength = strlen($txt);
+                        $txt .= str_repeat('*', $hash - $currentLength);
                         $txt .= '#';
                     }
 
