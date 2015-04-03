@@ -98,8 +98,11 @@ class Path
                 foreach ($this->hashes[$i] as $key => $hash) {
                     $reverseStar = false;
                     // First hash.
-                    if ($hash > 0 && $key === 0 && !isset($star)) {
-                        $txt .= str_repeat('.', $hash);
+                    if ($hash >= 0 && $key === 0 && !isset($star)) {
+                        if ($hash !== 0) {
+                            $txt .= str_repeat('.', $hash);
+                        }
+
                         $txt .= '#';
 
                     // If row is only hash.
@@ -119,7 +122,7 @@ class Path
                             $txt .= str_repeat('.', $star);
                             $starLength = $hash - $star;
                         } else {
-                            $starLength = $hash - $star -1;
+                            $starLength = $hash - $star - 1;
                         }
 
                         $txt .= str_repeat('*', $starLength);
@@ -130,7 +133,17 @@ class Path
                     } elseif (isset($star) && $hash < $star) {
                         $txt .= str_repeat('.', $hash);
                         $txt .= '#';
-                        $txt .= str_repeat('*', $star - $hash);
+
+                        $diff = 0;
+                        $next = '';
+                        if (isset($this->hashes[$i][$key + 1])) {
+                            $next = $this->hashes[$i][$key + 1];
+                        }
+                        if ($star !== $next) {
+                            $diff = $star - $hash;
+                        }
+
+                        $txt .= str_repeat('*', $diff);
 
                         // Account for 2 hashes on the same row.
                         if (!isset($this->hashes[$i][$key + 1])) {
@@ -143,7 +156,11 @@ class Path
                     // Else fill b/w hashes.
                     } elseif ($key > 0) {
                         $currentLength = strlen($txt);
-                        $txt .= str_repeat('*', $hash - $currentLength);
+
+                        if ($hash - $currentLength > 0) {
+                            $txt .= str_repeat('*', $hash - $currentLength);
+                        }
+
                         $txt .= '#';
                     }
 
