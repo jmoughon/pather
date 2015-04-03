@@ -616,7 +616,7 @@ Diff:
 
 CONCLUSION
 
-cat <<INPUT >input-10.txt
+cat <<INPUT >input-11.txt
 ...............................
 ...............................
 .......#.......................
@@ -633,7 +633,7 @@ cat <<INPUT >input-10.txt
 ...............................
 INPUT
 
-cat <<EXPECTED >expected-10.txt
+cat <<EXPECTED >expected-11.txt
 ...............................
 ...............................
 .......#.......................
@@ -654,15 +654,15 @@ cat <<EXPLAIN
 
 Input:
 
-`cat input-10.txt`
+`cat input-11.txt`
 
 Expected Output:
 
-`cat expected-10.txt`
+`cat expected-11.txt`
 EXPLAIN
 
 if [ -x pather ]; then
-  ./pather input-10.txt output-10.txt
+  ./pather input-11.txt output-11.txt
 else
   echo "PROBLEM: 'pather' does not exist in this directory or is not executable"
 fi
@@ -671,10 +671,69 @@ cat <<CONCLUSION
 
 Output:
 
-`cat output-10.txt`
+`cat output-11.txt`
 
 Diff:
 
-`diff -u expected-10.txt output-10.txt`
+`diff -u expected-11.txt output-11.txt`
+
+CONCLUSION
+
+cat <<INPUT >input-12.txt
+........................
+........................
+...........#............
+........................
+........................
+........................
+........................
+........................
+...#...............#....
+........................
+........................
+........................
+INPUT
+
+cat <<EXPECTED >expected-12.txt
+........................
+........................
+...........#............
+...........*............
+...........*............
+...........*............
+...........*............
+...........*............
+...#***************#....
+........................
+........................
+........................
+EXPECTED
+
+cat <<EXPLAIN
+
+Input:
+
+`cat input-12.txt`
+
+Expected Output:
+
+`cat expected-12.txt`
+EXPLAIN
+
+if [ -x pather ]; then
+  ./pather input-12.txt output-12.txt
+else
+  echo "PROBLEM: 'pather' does not exist in this directory or is not executable"
+fi
+
+cat <<CONCLUSION
+
+Output:
+
+`cat output-12.txt`
+
+Diff:
+
+`diff -u expected-12.txt output-12.txt`
 
 CONCLUSION
