@@ -1,0 +1,12 @@
+{
+    "linters": {
+        "phpcs": {
+            "excludes": [
+              "*.html",
+              "*.twig",
+              "*.info"
+            ],
+            "standard": "psr2"
+        }
+    }
+}
